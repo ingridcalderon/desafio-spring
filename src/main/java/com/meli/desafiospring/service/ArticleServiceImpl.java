@@ -17,4 +17,8 @@ public class ArticleServiceImpl implements ArticleService {
         return articleRepository.getAllArticles();
     }
 
+    @Override
+    public List<ArticleDTO> getArticlesByCategory(String category) {
+        return articleRepository.getArticlesByCategory(category);
+    }
 }

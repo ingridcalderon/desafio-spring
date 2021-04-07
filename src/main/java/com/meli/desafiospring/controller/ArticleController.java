@@ -16,4 +16,8 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.getAllArticles());
     }
 
+    @GetMapping(value = "/articles", params = {"category"})
+    public ResponseEntity getArticlesByCategory(@RequestParam(name = "category") String category) {
+        return ResponseEntity.ok(articleService.getArticlesByCategory(category));
+    }
 }

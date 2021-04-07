@@ -7,4 +7,6 @@ import java.util.List;
 public interface ArticleRepository {
     List<ArticleDTO> getAllArticles();
 
+    List<ArticleDTO> getArticlesByCategory(String category);
+
 }

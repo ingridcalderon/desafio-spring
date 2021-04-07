@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @Data
@@ -71,5 +72,13 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     public List<ArticleDTO> getAllArticles() {
         return this.getDatabase();
     }
+
+    @Override
+    public List<ArticleDTO> getArticlesByCategory(String category) {
+        return this.getDatabase().stream()
+                .filter(a -> a.getCategory().equals(category))
+                .collect(Collectors.toList());
+    }
+
 
 }
