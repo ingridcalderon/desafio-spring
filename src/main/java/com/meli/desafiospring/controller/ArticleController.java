@@ -5,19 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/articles")
 public class ArticleController {
     @Autowired
     ArticleService articleService;
 
-    @GetMapping("/articles")
-    public ResponseEntity getAllArticles() {
-        return ResponseEntity.ok(articleService.getAllArticles());
+    @GetMapping
+    public ResponseEntity getArticles(@RequestParam Map<String, String> queryParams) {
+        return ResponseEntity.ok(articleService.getArticles(queryParams));
     }
 
-    @GetMapping(value = "/articles", params = {"category"})
-    public ResponseEntity getArticlesByCategory(@RequestParam(name = "category") String category) {
-        return ResponseEntity.ok(articleService.getArticlesByCategory(category));
-    }
 }

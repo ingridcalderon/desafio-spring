@@ -1,6 +1,7 @@
 package com.meli.desafiospring.repository;
 
 import com.meli.desafiospring.dto.ArticleDTO;
+import com.meli.desafiospring.model.FilterEnum;
 import lombok.Data;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ResourceUtils;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
@@ -29,19 +31,15 @@ public class ArticleRepositoryImpl implements ArticleRepository {
         List<ArticleDTO> articles = new ArrayList<ArticleDTO>();
 
         try {
-            // Abrir el .csv en buffer de lectura
             File file = ResourceUtils.getFile("classpath:dbProductos.csv");
             readBuffer = new BufferedReader(new FileReader(file));
 
-            // Leer una linea del archivo (Esta línea la descarto porque es la cabecera)
             String line = readBuffer.readLine();
             boolean header = true;
+
             while (line != null) {
-                // step one : converting comma separate String to array of String
                 String[] dataLine = line.split(SEPARATOR);
-                // step two : convert String array to list of String
                 List<String> fixedLenghtList = Arrays.asList(dataLine);
-                // step three : copy fixed list to an ArrayList
                 ArrayList<String> listOfString = new ArrayList<String>(fixedLenghtList);
 
                 if(!header){
@@ -50,13 +48,11 @@ public class ArticleRepositoryImpl implements ArticleRepository {
                 }
 
                 header = false;
-                // Volver a leer otra línea del fichero
                 line = readBuffer.readLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            // Cierro el buffer de lectura
             if (readBuffer != null) {
                 try {
                     readBuffer.close();
@@ -74,11 +70,59 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
-    public List<ArticleDTO> getArticlesByCategory(String category) {
-        return this.getDatabase().stream()
+    public List<ArticleDTO> getArticlesByCategories(Map<String, String> filters) {
+        List<ArticleDTO> articlesAux = this.getDatabase();
+
+        for(Map.Entry<String,String> filter : filters.entrySet()){
+            if(filter.getKey().equals(FilterEnum.NAME.getDescription())){ articlesAux = this.getArticlesByName(filter.getValue(), articlesAux); };
+            if(filter.getKey().equals(FilterEnum.CATEGORY.getDescription())){ articlesAux = this.getArticlesByCategory(filter.getValue(), articlesAux); };
+            if(filter.getKey().equals(FilterEnum.BRAND.getDescription())){ articlesAux = this.getArticlesByBrand(filter.getValue(), articlesAux); };
+            if(filter.getKey().equals(FilterEnum.FREE_SHIPPING.getDescription())){ articlesAux = this.getArticlesByFreeShipping(Boolean.valueOf(filter.getValue()), articlesAux); };
+            if(filter.getKey().equals(FilterEnum.PRESTIGE.getDescription())) { articlesAux = this.getArticlesByPrestige(Integer.valueOf(filter.getValue()), articlesAux);}
+            if(filter.getKey().equals(FilterEnum.PRICE.getDescription())){ articlesAux = this.getArticlesByPrice(Float.valueOf(filter.getValue()), articlesAux); };
+        }
+        return articlesAux;
+    }
+
+    @Override
+    public List<ArticleDTO> getArticlesByName(String name, List<ArticleDTO> articlesAux) {
+        return articlesAux.stream()
+                .filter(a -> a.getName().equals(name))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ArticleDTO> getArticlesByCategory(String category, List<ArticleDTO> articlesAux) {
+        return articlesAux.stream()
                 .filter(a -> a.getCategory().equals(category))
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ArticleDTO> getArticlesByBrand(String brand, List<ArticleDTO> articlesAux) {
+        return articlesAux.stream()
+                .filter(a -> a.getBrand().equals(brand))
+                .collect(Collectors.toList());
+    }
 
+    @Override
+    public List<ArticleDTO> getArticlesByFreeShipping(boolean isFreeShipping, List<ArticleDTO> articlesAux) {
+        return articlesAux.stream()
+                .filter(a -> a.isFreeShipping() == isFreeShipping)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ArticleDTO> getArticlesByPrestige(int prestige, List<ArticleDTO> articlesAux) {
+        return articlesAux.stream()
+                .filter(a -> a.getPrestige() == prestige)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ArticleDTO> getArticlesByPrice(float price, List<ArticleDTO> articlesAux) {
+        return articlesAux.stream()
+                .filter(a -> a.getPrice() == price)
+                .collect(Collectors.toList());
+    }
 }

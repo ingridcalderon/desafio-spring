@@ -1,11 +1,14 @@
 package com.meli.desafiospring.service;
 
 import com.meli.desafiospring.dto.ArticleDTO;
+import com.meli.desafiospring.model.FilterEnum;
 import com.meli.desafiospring.repository.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
@@ -13,12 +16,55 @@ public class ArticleServiceImpl implements ArticleService {
     ArticleRepository articleRepository;
 
     @Override
-    public List<ArticleDTO> getAllArticles() {
-        return articleRepository.getAllArticles();
+    public List<ArticleDTO> getArticles(Map<String, String> queryParams) {
+        int quantityParams = queryParams.keySet().size();
+
+        switch (quantityParams) {
+            case 0:
+                return articleRepository.getAllArticles();
+            case 1:
+                if(this.isCategoryFilter(queryParams)){
+                    return articleRepository.getArticlesByCategories(queryParams);
+                }
+                break;
+            case 2:
+                if(this.validFilters(queryParams)){
+                    return articleRepository.getArticlesByCategories(queryParams);
+                }
+                break;
+        }
+        return null;
     }
 
-    @Override
-    public List<ArticleDTO> getArticlesByCategory(String category) {
-        return articleRepository.getArticlesByCategory(category);
+    public List<ArticleDTO> getArticlesByCategories(Map<String, String> queryParams) {
+        return articleRepository.getArticlesByCategories(queryParams);
+    }
+
+
+    //TODO: crear un validador de filtros
+    private boolean isCategoryFilter(Map<String, String> queryParams){
+        return queryParams.keySet().contains(FilterEnum.CATEGORY.getDescription());
+    }
+
+    private boolean validFilters(Map<String, String> queryParams){
+        List<String> listParams = queryParams.keySet().stream().collect(Collectors.toList());
+        boolean validFilters = true;
+
+        for (String param : listParams){
+            if(!this.validFilter(param)){
+                validFilters = false;
+            }
+        }
+
+        return validFilters;
+    }
+
+    private boolean validFilter(String filter){
+        return filter.equals(FilterEnum.NAME.getDescription()) ||
+                filter.equals(FilterEnum.CATEGORY.getDescription()) ||
+                filter.equals(FilterEnum.BRAND.getDescription()) ||
+                filter.equals(FilterEnum.FREE_SHIPPING.getDescription()) ||
+                filter.equals(FilterEnum.PRESTIGE.getDescription()) ||
+                filter.equals(FilterEnum.PRICE.getDescription());
     }
 }
