@@ -2,6 +2,7 @@ package com.meli.desafiospring.repository;
 
 import com.meli.desafiospring.dto.ArticleDTO;
 import com.meli.desafiospring.model.FilterEnum;
+import com.meli.desafiospring.utils.Sorter;
 import lombok.Data;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ResourceUtils;
@@ -124,5 +125,20 @@ public class ArticleRepositoryImpl implements ArticleRepository {
         return articlesAux.stream()
                 .filter(a -> a.getPrice() == price)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ArticleDTO> sortArticles(int orderType, List<ArticleDTO> articles){
+        switch (orderType){
+            case 0:
+                return Sorter.sortByNameAsc(articles);
+            case 1:
+                return Sorter.sortByNameDesc(articles);
+            case 2:
+                return Sorter.sortByPriceDesc(articles);
+            case 3:
+                return Sorter.sortByPriceAsc(articles);
+        }
+        return null;
     }
 }

@@ -21,4 +21,6 @@ public interface ArticleRepository {
     List<ArticleDTO> getArticlesByPrestige(int prestige, List<ArticleDTO> articlesAux);
 
     List<ArticleDTO> getArticlesByPrice(float price, List<ArticleDTO> articlesAux);
+
+    List<ArticleDTO> sortArticles(int ordering, List<ArticleDTO> articles);
 }
