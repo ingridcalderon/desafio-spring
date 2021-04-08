@@ -1,7 +1,5 @@
 package com.meli.desafiospring.model;
 
-import lombok.Data;
-
 public enum FilterEnum {
     NAME("name"),
     CATEGORY("category"),
