@@ -1,6 +1,5 @@
 package com.meli.desafiospring.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +16,7 @@ public class TicketDTO {
     public TicketDTO(List<RequestedArticleDTO> articles, float total){
         this.articles = articles;
         this.total = total;
-        this.count++;
-        this.id = this.count;
+        count++;
+        this.id = count;
     }
 }

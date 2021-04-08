@@ -2,6 +2,7 @@ package com.meli.desafiospring.repository;
 
 import com.meli.desafiospring.dto.*;
 import com.meli.desafiospring.enums.FilterEnum;
+import com.meli.desafiospring.exception.ArticleException;
 import com.meli.desafiospring.exception.NoFoundArticlesException;
 import com.meli.desafiospring.exception.PurchaseCannotFinalizedException;
 import com.meli.desafiospring.utils.CvsReader;
@@ -32,22 +33,22 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
-    public List<ArticleDTO> getArticlesByCategories(Map<String, String> filters) throws NoFoundArticlesException {
+    public List<ArticleDTO> getArticlesByCategories(Map<String, String> filters) throws ArticleException {
         List<ArticleDTO> articlesAux = this.getDatabase();
 
         for(Map.Entry<String,String> filter : filters.entrySet()){
-            if(filter.getKey().equals(FilterEnum.NAME.getDescription())){ articlesAux = this.getArticlesByName(filter.getValue(), articlesAux); };
-            if(filter.getKey().equals(FilterEnum.CATEGORY.getDescription())){ articlesAux = this.getArticlesByCategory(filter.getValue(), articlesAux); };
-            if(filter.getKey().equals(FilterEnum.BRAND.getDescription())){ articlesAux = this.getArticlesByBrand(filter.getValue(), articlesAux); };
-            if(filter.getKey().equals(FilterEnum.FREE_SHIPPING.getDescription())){ articlesAux = this.getArticlesByFreeShipping(Boolean.valueOf(filter.getValue()), articlesAux); };
-            if(filter.getKey().equals(FilterEnum.PRESTIGE.getDescription())) { articlesAux = this.getArticlesByPrestige(Integer.valueOf(filter.getValue()), articlesAux);}
-            if(filter.getKey().equals(FilterEnum.PRICE.getDescription())){ articlesAux = this.getArticlesByPrice(Float.valueOf(filter.getValue()), articlesAux); };
+            if(filter.getKey().equals(FilterEnum.NAME.getDescription())){ articlesAux = this.getArticlesByName(filter.getValue(), articlesAux); }
+            if(filter.getKey().equals(FilterEnum.CATEGORY.getDescription())){ articlesAux = this.getArticlesByCategory(filter.getValue(), articlesAux); }
+            if(filter.getKey().equals(FilterEnum.BRAND.getDescription())){ articlesAux = this.getArticlesByBrand(filter.getValue(), articlesAux); }
+            if(filter.getKey().equals(FilterEnum.FREE_SHIPPING.getDescription())){ articlesAux = this.getArticlesByFreeShipping(Boolean.valueOf(filter.getValue()), articlesAux); }
+            if(filter.getKey().equals(FilterEnum.PRESTIGE.getDescription())) { articlesAux = this.getArticlesByPrestige(Integer.valueOf(filter.getValue()), articlesAux); }
+            if(filter.getKey().equals(FilterEnum.PRICE.getDescription())){ articlesAux = this.getArticlesByPrice(Float.valueOf(filter.getValue()), articlesAux); }
         }
         return articlesAux;
     }
 
     @Override
-    public List<ArticleDTO> getArticlesByName(String name, List<ArticleDTO> articlesAux) throws NoFoundArticlesException {
+    public List<ArticleDTO> getArticlesByName(String name, List<ArticleDTO> articlesAux) throws ArticleException {
         List<ArticleDTO> articles = articlesAux.stream()
                 .filter(a -> a.getName().equals(name))
                 .collect(Collectors.toList());
@@ -58,7 +59,7 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
-    public List<ArticleDTO> getArticlesByCategory(String category, List<ArticleDTO> articlesAux) throws NoFoundArticlesException {
+    public List<ArticleDTO> getArticlesByCategory(String category, List<ArticleDTO> articlesAux) throws ArticleException {
         List<ArticleDTO> articles = articlesAux.stream()
                 .filter(a -> a.getCategory().equals(category))
                 .collect(Collectors.toList());
@@ -69,7 +70,7 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
-    public List<ArticleDTO> getArticlesByBrand(String brand, List<ArticleDTO> articlesAux) throws NoFoundArticlesException {
+    public List<ArticleDTO> getArticlesByBrand(String brand, List<ArticleDTO> articlesAux) throws ArticleException {
         List<ArticleDTO> articles = articlesAux.stream()
                 .filter(a -> a.getBrand().equals(brand))
                 .collect(Collectors.toList());
@@ -80,7 +81,7 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
-    public List<ArticleDTO> getArticlesByFreeShipping(boolean isFreeShipping, List<ArticleDTO> articlesAux) throws NoFoundArticlesException {
+    public List<ArticleDTO> getArticlesByFreeShipping(boolean isFreeShipping, List<ArticleDTO> articlesAux) throws ArticleException {
         List<ArticleDTO> articles = articlesAux.stream()
                 .filter(a -> a.isFreeShipping() == isFreeShipping)
                 .collect(Collectors.toList());
@@ -91,7 +92,7 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
-    public List<ArticleDTO> getArticlesByPrestige(int prestige, List<ArticleDTO> articlesAux) throws NoFoundArticlesException {
+    public List<ArticleDTO> getArticlesByPrestige(int prestige, List<ArticleDTO> articlesAux) throws ArticleException {
         List<ArticleDTO> articles = articlesAux.stream()
                 .filter(a -> a.getPrestige() == prestige)
                 .collect(Collectors.toList());
@@ -102,7 +103,7 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
-    public List<ArticleDTO> getArticlesByPrice(float price, List<ArticleDTO> articlesAux) throws NoFoundArticlesException {
+    public List<ArticleDTO> getArticlesByPrice(float price, List<ArticleDTO> articlesAux) throws ArticleException {
         List<ArticleDTO> articles = articlesAux.stream()
                 .filter(a -> a.getPrice() == price)
                 .collect(Collectors.toList());
@@ -140,7 +141,7 @@ public class ArticleRepositoryImpl implements ArticleRepository {
         }
 
         //Generar ticket
-        TicketDTO ticket = null;
+        TicketDTO ticket;
         if(canSendPurchase){
             ticket = this.generateTicket(purchaseRequest);
             //TODO update cvs
@@ -164,8 +165,7 @@ public class ArticleRepositoryImpl implements ArticleRepository {
             prices += articleAux.get().getPrice();
         }
 
-        TicketDTO ticket = new TicketDTO(purchaseRequest.getArticles(), prices);
-        return ticket;
+        return new TicketDTO(purchaseRequest.getArticles(), prices);
     }
 
     private boolean stockOfArticle(List<ArticleDTO> articles, RequestedArticleDTO article){

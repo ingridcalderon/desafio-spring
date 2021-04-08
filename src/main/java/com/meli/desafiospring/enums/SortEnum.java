@@ -6,7 +6,7 @@ public enum SortEnum {
     PRICE_ASC(2),
     PRICE_DES(3);
 
-    private int order;
+    private final int order;
 
     SortEnum(int order){
         this.order = order;

@@ -16,7 +16,7 @@ public class CvsReader {
 
     public static List<ArticleDTO> loadDataBase() {
         BufferedReader readBuffer = null;
-        List<ArticleDTO> articles = new ArrayList<ArticleDTO>();
+        List<ArticleDTO> articles = new ArrayList<>();
 
         try {
             File file = ResourceUtils.getFile("classpath:dbProductos.csv");
@@ -27,8 +27,8 @@ public class CvsReader {
 
             while (line != null) {
                 String[] dataLine = line.split(SEPARATOR);
-                List<String> fixedLenghtList = Arrays.asList(dataLine);
-                ArrayList<String> listOfString = new ArrayList<String>(fixedLenghtList);
+                List<String> fixedLengthList = Arrays.asList(dataLine);
+                ArrayList<String> listOfString = new ArrayList<>(fixedLengthList);
 
                 if(!header){
                     ArticleDTO articleAux = new ArticleDTO(listOfString.get(0),listOfString.get(1),listOfString.get(2),listOfString.get(3),listOfString.get(4),listOfString.get(5),listOfString.get(6),listOfString.get(7));

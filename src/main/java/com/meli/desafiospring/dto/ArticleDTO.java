@@ -23,7 +23,7 @@ public class ArticleDTO {
         this.brand = brand;
         this.price = Float.parseFloat(price.substring(1).replaceAll("\\.",""));
         this.quantity = Integer.parseInt(quantity);
-        this.freeShipping = freeShipping.equals("SI") ? true : false;
+        this.freeShipping = freeShipping.equals("SI");
         this.prestige = prestige.length();
     }
 }

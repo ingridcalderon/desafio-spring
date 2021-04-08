@@ -4,7 +4,6 @@ import com.meli.desafiospring.dto.ArticleDTO;
 import com.meli.desafiospring.dto.PurchaseRequestDTO;
 import com.meli.desafiospring.dto.PurchaseResponseDTO;
 import com.meli.desafiospring.exception.ArticleException;
-import com.meli.desafiospring.exception.NoFoundArticlesException;
 import com.meli.desafiospring.exception.ParametersFilterInvalidException;
 import com.meli.desafiospring.repository.ArticleRepository;
 import com.meli.desafiospring.utils.ParametersValidator;
@@ -47,10 +46,6 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public PurchaseResponseDTO sendPurchaseRequest(PurchaseRequestDTO purchaseRequest) throws Exception {
         return articleRepository.sendPurchaseRequest(purchaseRequest);
-    }
-
-    public List<ArticleDTO> getArticlesByCategories(Map<String, String> queryParams) throws NoFoundArticlesException {
-        return articleRepository.getArticlesByCategories(queryParams);
     }
 
     public List<ArticleDTO> sort(int ordering, List<ArticleDTO> articles){

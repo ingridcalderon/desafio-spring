@@ -8,7 +8,7 @@ public enum FilterEnum {
     PRESTIGE("prestige"),
     PRICE("price");
 
-    private String description;
+    private final String description;
 
     FilterEnum(String description){
         this.description = description;
