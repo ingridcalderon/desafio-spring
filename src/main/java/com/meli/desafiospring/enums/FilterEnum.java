@@ -1,4 +1,4 @@
-package com.meli.desafiospring.model;
+package com.meli.desafiospring.enums;
 
 public enum FilterEnum {
     NAME("name"),
